@@ -16,6 +16,7 @@ body{background:var(--bg);color:var(--ink);min-height:100vh;display:flex;justify
 .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;margin-top:16px;}
 .btn{display:block;width:100%;text-align:center;text-decoration:none;background:var(--navy);color:#fff;font-weight:800;font-size:17px;padding:16px;border-radius:14px;}
 .btn:active{opacity:.9;}
+.ver{text-align:center;color:var(--mut);font-size:12px;margin-top:8px;}
 .qr{text-align:center;}
 .qr img{width:190px;height:190px;border-radius:12px;border:1px solid var(--line);padding:8px;background:#fff;}
 .qr p{color:var(--mut);font-size:13px;margin-top:10px;}
@@ -39,8 +40,9 @@ h2{font-size:17px;font-weight:800;margin-bottom:12px;}
   </div>
 
   <div class="card">
-    <a class="btn" href="https://github.com/HKHJA/marsa-app/releases/download/latest/MarsaBaghdad.apk">⬇ تحميل وتثبيت التطبيق</a>
-    <div style="height:14px"></div>
+    <a class="btn" id="dl" href="https://github.com/HKHJA/marsa-app/releases/latest">⬇ تحميل وتثبيت التطبيق</a>
+    <div class="ver" id="ver">يتم جلب أحدث نسخة…</div>
+    <div style="height:12px"></div>
     <div class="qr">
       <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAXIAAAFyAQAAAADAX2ykAAACc0lEQVR4nO2aTW6kMBBGXw1IWYKUA+Qo9M3mTHMDOEoOEAmWkYy+WZRN00SZKBpCmpnywo3bb1GS9dWfbeIzY/jxKRyCDz744IMPPvj3eMujxqzNSwYzs8tU9i4H2hP8XnztP10PMD0CzDU0I9aNjwmmKgFgx9gT/NfwU1ao9FwjjQDMfqhmVh9tT/D78PVmbTTCul8tGtpvsCf4r+XVu2or2U+l77cn+L/ji34bAVNeaHh6NQYrywPtCX5fHklaDrAS3biZyl4nSf292R/8n4fr96ZJOZvg1RhaTJu9u7M/+A+G67cbQb0vE+qbBFBJGiv5MvR7Rj7rd2jBOgFMj4KpRsNlNg0XjG5EUf+eki/xt5HI8RfWSyVc3Qr9npBf8qtylvm/RHbNviGFfz4lX+Kvksffa+qsvlGZqBT6PSW/qo/WSh7xJMtFrJHIr87J57jq4gSuqs3uulGc74l5z5+N5qWm01zDVCfrng1BJWOqEzSp1jH2BL8vv6p/8YLXE+ZrEE5AkyJ/Pie/+OdUAq6nznjovSZecb6n5Lf58zoSFznnJCvO97S8+unBK1yzNt8PQpP8at8uR9sT/M780M7+/spDr4+pXB6ubvrv1P7g3xu6Hd6aXBpWPgFRH52Zv76fzJm0S3e2/NWU7tad2h/8B3yn0sZgMssOeXrwIIyH4yPtCX4nfl3/dkuanMulxTWPUR/9I3x21C3YBXD9Dk9SXt67/cHfju37WGhearlrBgQz8iblIfYEvy+/9Dekaxsj3+prCb3Rnzwr/+b9pD/dKJ1K98+d4nxPym/fT6pM+Sb45usAe4IPPvjggw/+f+B/A+uWBpfybc+yAAAAAElFTkSuQmCC" alt="QR">
       <p>امسح هذا الرمز بكاميرا هاتف أندرويد آخر للتثبيت</p>
@@ -50,14 +52,28 @@ h2{font-size:17px;font-weight:800;margin-bottom:12px;}
   <div class="card">
     <h2>خطوات التثبيت</h2>
     <div class="steps">
-      <div class="step"><div class="num">1</div><div><b>اضغط «تحميل وتثبيت التطبيق»</b><span>سيبدأ تنزيل الملف على هاتفك.</span></div></div>
+      <div class="step"><div class="num">1</div><div><b>اضغط «تحميل وتثبيت التطبيق»</b><span>سيبدأ تنزيل أحدث نسخة على هاتفك.</span></div></div>
       <div class="step"><div class="num">2</div><div><b>اسمح بالتثبيت</b><span>إن ظهرت رسالة «مصادر غير معروفة»، فعّل السماح لهذه المرة.</span></div></div>
-      <div class="step"><div class="num">3</div><div><b>افتح الملف وثبّت</b><span>بعد انتهاء التنزيل، افتحه واضغط «تثبيت».</span></div></div>
+      <div class="step"><div class="num">3</div><div><b>افتح الملف وثبّت</b><span>احذف أي نسخة قديمة أولاً، ثم افتح الملف واضغط «تثبيت».</span></div></div>
     </div>
   </div>
 
   <div class="note">📱 هذا التطبيق لهواتف <b>أندرويد</b> فقط حالياً — لا يعمل على iPhone.</div>
   <div class="foot">مرسى بغداد • يتم تحديث هذا الرابط تلقائياً بأحدث نسخة</div>
 </div>
+<script>
+// Always point the button at the newest uploaded APK (avoids browser caching an old file).
+fetch('https://api.github.com/repos/HKHJA/marsa-app/releases/latest', {cache:'no-store'})
+  .then(function(r){return r.json();})
+  .then(function(d){
+    var apk=(d.assets||[]).find(function(a){return a.name.toLowerCase().endsWith('.apk');});
+    if(apk){ document.getElementById('dl').href=apk.browser_download_url; }
+    var t=d.published_at ? new Date(d.published_at) : null;
+    document.getElementById('ver').textContent = apk
+      ? ('أحدث نسخة: '+apk.name+(t?(' • '+t.toLocaleDateString('ar')):'') )
+      : 'اضغط للانتقال إلى صفحة التنزيل';
+  })
+  .catch(function(){ document.getElementById('ver').textContent='اضغط للانتقال إلى صفحة التنزيل'; });
+</script>
 </body>
 </html>
