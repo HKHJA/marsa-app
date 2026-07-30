@@ -47,12 +47,18 @@ jobs:
           flutter pub get
           dart run flutter_launcher_icons
           flutter build apk --release
+      - name: Inspect APK for tile photos
+        working-directory: ${{ env.SRC }}
+        run: |
+          echo "== tile assets inside the built APK =="
+          unzip -l build/app/outputs/flutter-apk/app-release.apk | grep -i "assets/tiles" || echo "!! NO TILE ASSETS IN APK !!"
       - name: Publish to permanent "latest" release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          cp "${{ env.SRC }}build/app/outputs/flutter-apk/app-release.apk" MarsaBaghdad.apk
+          APK="MarsaBaghdad-r${{ github.run_number }}.apk"
+          cp "${{ env.SRC }}build/app/outputs/flutter-apk/app-release.apk" "$APK"
           gh release delete latest --yes --cleanup-tag || true
-          gh release create latest MarsaBaghdad.apk \
+          gh release create latest "$APK" \
             --title "Marsa Baghdad — Test Build" \
             --notes "أحدث نسخة تجريبية من تطبيق مرسى بغداد. افتح صفحة التثبيت للتحميل."
