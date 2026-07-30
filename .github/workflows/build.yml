@@ -1,0 +1,46 @@
+name: Build & Publish Test APK
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Unzip project
+        run: |
+          mkdir -p _src
+          unzip -q marsa_baghdad.zip -d _src
+          echo "SRC=$(ls -d _src/*/ | head -1)" >> "$GITHUB_ENV"
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Build test APK (debug-signed)
+        working-directory: ${{ env.SRC }}
+        run: |
+          flutter create --platforms=android --project-name marsa_baghdad .
+          python3 patch_manifest.py
+          flutter pub get
+          dart run flutter_launcher_icons
+          flutter build apk --release
+      - name: Publish to permanent "latest" release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp "${{ env.SRC }}build/app/outputs/flutter-apk/app-release.apk" MarsaBaghdad.apk
+          gh release delete latest --yes --cleanup-tag || true
+          gh release create latest MarsaBaghdad.apk \
+            --title "Marsa Baghdad — Test Build" \
+            --notes "أحدث نسخة تجريبية من تطبيق مرسى بغداد. افتح صفحة التثبيت للتحميل."
